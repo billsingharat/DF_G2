@@ -13,7 +13,7 @@ from sklearn.preprocessing import LabelBinarizer
 import tensorflow as tf
 import tensorflow.keras.metrics as metrics
 
-data = pd.read_pickle('data_part1.pkl')
+data = pd.read_pickle('data_part2.pkl')
 data_test = pd.read_pickle('data_test.pkl')
 
 x_train = np.asarray(data['image'].to_list())
@@ -42,28 +42,13 @@ model.compile(
         keras.metrics.Recall(name="recall")
     ])
 
-# model.fit(x_train, y_train, epochs=1, batch_size=32)
-# loss, accuracy, auc, recall, precision,  = model.evaluate(x_test, y_test)
-#
-#
-# print(loss)
-# print(type(loss))
-# print(accuracy)
-# print(type(accuracy))
-# print(auc)
-# print(type(auc))
-# print(precision)
-# print(type(precision))
-# print(recall)
-# print(type(recall))
 
-
-class FlowerClient1(fl.client.NumPyClient):
+class FlowerClient2(fl.client.NumPyClient):
     def get_parameters(self, config):
         return model.get_weights()
 
     def fit(self, parameters: NDArrays, config):
-        pickle_file = open('client1_params', 'ab')
+        pickle_file = open('client2_params', 'ab')
         pickle.dump(parameters, pickle_file)
         pickle_file.close()
         model.set_weights(parameters)
@@ -78,5 +63,5 @@ class FlowerClient1(fl.client.NumPyClient):
                                    'precision': precision, 'Recall': recall}
 
 
-fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=FlowerClient1())
+fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=FlowerClient2())
 #fl.client.start_client(server_address="[::]:8080", client=FlowerClient1.to_client())
